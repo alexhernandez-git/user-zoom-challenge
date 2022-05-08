@@ -1,3 +1,1 @@
-module.exports = {
-  userAuthentication: require("./userAuthentication"),
-};
+module.exports = {};
