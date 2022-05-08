@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: ./compose/dev/backend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./.envs/.local/.mongo
+      - ./.envs/.local/.node
+    command: npm run dev
+  db:
+    image: mongo:5.0.2
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+    env_file:
+      - ./.envs/.local/.mongo
+  client:
+    build:
+      context: .
+      dockerfile: ./compose/dev/frontend/Dockerfile
+    restart: unless-stopped
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    volumes:
+      - ./frontend:/app
+    env_file:
+      - ./.envs/.local/.mongo
+      - ./.envs/.local/.node
+    command: yarn start
+volumes:
+  mongodb:
